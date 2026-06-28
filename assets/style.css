@@ -1,0 +1,148 @@
+/* ---------- GLOBAL ---------- */
+
+#MainMenu,
+footer,
+header {
+    visibility: hidden;
+}
+
+.stApp {
+    background: #0E1117;
+    color: white;
+}
+
+/* ---------- SIDEBAR ---------- */
+
+section[data-testid="stSidebar"] {
+    background: #161B22;
+    border-right: 1px solid #30363d;
+}
+
+/* Sidebar Title */
+
+.sidebar-title{
+    font-size:30px;
+    font-weight:700;
+    color:white;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.stButton>button{
+
+    width:100%;
+    height:48px;
+
+    border-radius:14px;
+
+    background:#1E2636;
+
+    color:white;
+
+    border:1px solid #4F8BF9;
+
+    transition:0.3s;
+
+    font-weight:600;
+
+}
+
+.stButton>button:hover{
+
+    background:#4F8BF9;
+
+    color:white;
+
+    transform:translateY(-2px);
+
+}
+
+/* ---------- CHAT ---------- */
+
+[data-testid="stChatMessage"]{
+
+    border-radius:18px;
+
+    padding:10px;
+
+}
+
+/* ---------- CHAT INPUT ---------- */
+
+.stChatInput input{
+
+    border-radius:18px;
+
+}
+
+/* ---------- WELCOME CARD ---------- */
+
+.welcome-card{
+
+    background:#1D2537;
+
+    border:1px solid #3B82F6;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    margin-bottom:25px;
+
+}
+
+/* ---------- INFO CARDS ---------- */
+
+.metric-card{
+
+    background:#1D2537;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    border:1px solid #2D3748;
+
+    text-align:center;
+
+}
+
+/* ---------- TITLE ---------- */
+
+.main-title{
+
+    text-align:center;
+
+    font-size:54px;
+
+    font-weight:800;
+
+    color:#4F8BF9;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:#9CA3AF;
+
+    font-size:18px;
+
+    margin-bottom:25px;
+
+}
+
+/* ---------- FOOTER ---------- */
+
+.footer{
+
+    text-align:center;
+
+    color:#9CA3AF;
+
+    padding:20px;
+
+    font-size:14px;
+
+}

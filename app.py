@@ -1,17 +1,24 @@
 import streamlit as st
 import time
 from chatbot import get_answer
+import pandas as pd
+from datetime import datetime
 
-# ---------------- PAGE CONFIG ---------------- #
+faq_data = pd.read_csv("data/faqs.csv")
 
+# -----------------------------
+# PAGE CONFIG
+# -----------------------------
 st.set_page_config(
     page_title="AI FAQ Assistant",
     page_icon="🤖",
     layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# ---------------- CUSTOM CSS ---------------- #
-
+# -----------------------------
+# CUSTOM CSS
+# -----------------------------
 st.markdown("""
 <style>
 
@@ -20,44 +27,51 @@ st.markdown("""
 footer {visibility:hidden;}
 header {visibility:hidden;}
 
-/* Main Background */
+/* Main App */
 .stApp{
-    background-color:#0E1117;
+    background:#0E1117;
+    color:white;
 }
 
 /* Sidebar */
 section[data-testid="stSidebar"]{
-    background-color:#161B22;
+    background:#161B22;
     border-right:1px solid #30363d;
+}
+
+/* Sidebar Titles */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3{
+    color:white;
 }
 
 /* Buttons */
 .stButton>button{
     width:100%;
     border-radius:12px;
-    background:#21262D;
+    padding:10px;
+    background:#1F2937;
     color:white;
-    border:1px solid #4F8BF9;
+    border:1px solid #3B82F6;
     transition:0.3s;
 }
 
 .stButton>button:hover{
-    background:#4F8BF9;
+    background:#2563EB;
+    border:1px solid #60A5FA;
     color:white;
 }
 
-/* Metric */
+/* Metrics */
 [data-testid="stMetric"]{
     background:#1C2333;
+    border-radius:12px;
     padding:10px;
-    border-radius:15px;
-    border:1px solid #2d333b;
+    border:1px solid #2F3B52;
 }
 
 /* Chat Input */
-.stChatInput input{
-    border-radius:20px;
-}
 
 /* Chat Messages */
 [data-testid="stChatMessage"]{
@@ -65,15 +79,37 @@ section[data-testid="stSidebar"]{
     padding:10px;
 }
 
+/* Welcome Card */
+.welcome-card{
+    background:#1E293B;
+    border:1px solid #3B82F6;
+    border-radius:18px;
+    padding:28px;
+}
+
+/* Footer */
+.footer{
+    text-align:center;
+    color:gray;
+    font-size:14px;
+    padding:15px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- SESSION ---------------- #
-
+# -----------------------------
+# SESSION STATE
+# -----------------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ---------------- SIDEBAR ---------------- #
+if "conversation_count" not in st.session_state:
+    st.session_state.conversation_count = 0
+
+# ==========================================================
+# SIDEBAR
+# ==========================================================
 
 with st.sidebar:
 
@@ -83,54 +119,62 @@ with st.sidebar:
 
     st.subheader("📚 About")
 
-    st.write("""
-Welcome!
+    st.write(
+        """
+This chatbot answers questions from a predefined
+FAQ database using Python and Streamlit.
+"""
+    )
 
-This chatbot answers questions from a predefined FAQ database.
+    st.markdown("---")
 
-### 🛠 Built With
+    st.subheader("🛠 Built With")
 
-🐍 Python
-
-📊 Pandas
-
-⚡ Streamlit
-
-💬 NLP Matching
+    st.markdown("""
+- 🐍 Python
+- 📊 Pandas
+- ⚡ Streamlit
+- 🤖 AI FAQ Engine
 """)
 
     st.markdown("---")
 
     st.subheader("💡 Quick Questions")
 
-    examples = [
+    quick_questions = [
         "What is AI?",
+        "What is Machine Learning?",
         "What is Python?",
+        "What is Streamlit?",
         "What is GitHub?",
         "What is Power BI?",
         "Who developed Python?"
     ]
 
-    for question in examples:
+    for question in quick_questions:
 
-        if st.button(question):
+        if st.button(question, use_container_width=True):
 
             st.session_state.messages.append(
                 {
-                    "role":"user",
-                    "content":question
+                    "role": "user",
+                    "content": question,
+                    "time":datetime.now().strftime("%I:%M %p")
                 }
             )
 
+            st.session_state.conversation_count += 1
+
             with st.spinner("🤖 Thinking..."):
-                time.sleep(0.8)
+                time.sleep(0.7)
 
             answer = get_answer(question)
 
             st.session_state.messages.append(
                 {
-                    "role":"assistant",
-                    "content":answer
+                    "role": "assistant",
+                    "content": answer,
+                    "time": datetime.now().strftime("%I:%M %p")
                 }
             )
 
@@ -140,66 +184,86 @@ This chatbot answers questions from a predefined FAQ database.
 
     st.subheader("📊 Project Stats")
 
-    st.metric("FAQs", "10")
-    st.metric("Version", "1.0")
+    col1, col2 = st.columns(2)
 
+    with col1:
+       st.metric("FAQs", len(faq_data))
+
+    with col2:
+        st.metric("Version", "2.0")
+
+        st.metric( "Questions Asked",
+        st.session_state.conversation_count
+        )
+
+        st.metric(
+    "Knowledge Base",
+    f"{len(faq_data)} FAQs"
+)
     st.markdown("---")
 
-    if st.button("🗑 Clear Chat"):
+    if st.button("🗑 Clear Chat", use_container_width=True):
 
-        st.session_state.messages=[]
+        st.session_state.messages = []
 
         st.rerun()
 
     st.markdown("---")
 
-    st.caption("👨‍💻 Developed by")
-    st.caption("**Balaji Nadar**")
+    st.success("AI Assistant Online")
 
-# ---------------- HEADER ---------------- #
+    st.caption("👨‍💻 Developed by")
+
+    st.markdown("**Balaji Nadar**")
+
+    # ==========================================================
+# MAIN PAGE
+# ==========================================================
+
+# ---------- Header ----------
 
 st.markdown("""
-<h1 style='text-align:center;
+<div style="text-align:center;">
+
+<h1 style="
 color:#4F8BF9;
-font-size:48px;'>
+font-size:52px;
+margin-bottom:0px;
+">
 
 🤖 AI FAQ Assistant
 
 </h1>
 
-<p style='text-align:center;
-font-size:18px;
-color:gray;'>
+<p style="
+font-size:20px;
+color:#9CA3AF;
+margin-top:5px;
+">
 
-Your Intelligent FAQ Companion
+Ask questions about AI, Python, Power BI and GitHub.
 
 </p>
 
+</div>
+
 """, unsafe_allow_html=True)
 
-# ---------------- WELCOME ---------------- #
+# ---------- Welcome Card ----------
 
-if len(st.session_state.messages)==0:
+if len(st.session_state.messages) == 0:
 
     st.markdown("""
 
-<div style="
-
-padding:25px;
-
-border-radius:20px;
-
-background:#1C2333;
-
-border:1px solid #4F8BF9;
-
-">
+<div class="welcome-card">
 
 <h2>👋 Welcome!</h2>
 
 <p>
 
-Ask me anything about
+Ask me anything about:
+
+</p>
 
 <ul>
 
@@ -213,77 +277,88 @@ Ask me anything about
 
 </ul>
 
-Start by typing your question below.
+<p>
+
+💡 Select a question from the sidebar
+or type your own question below.
 
 </p>
 
 </div>
 
-""",unsafe_allow_html=True)
-# ---------------- DISPLAY CHAT ---------------- #
+""", unsafe_allow_html=True)
+
+# ---------- Chat History ----------
 
 for message in st.session_state.messages:
 
     avatar = "🤖" if message["role"] == "assistant" else "🙂"
 
     with st.chat_message(message["role"], avatar=avatar):
+
         st.markdown(message["content"])
 
-# ---------------- CHAT INPUT ---------------- #
+        if "time" in message:
+            st.caption(message["time"])
+
+# ---------- Chat Input ----------
 
 prompt = st.chat_input("💬 Ask me anything...")
 
 if prompt:
 
-    # Display User Message
+    # Save user message
+
     st.session_state.messages.append(
         {
-            "role": "user",
-            "content": prompt
+            "role":"user",
+            "content":prompt,
+             "time":datetime.now().strftime("%I:%M %p")
         }
     )
 
-    # Show Thinking Animation
+    # Thinking animation
+
     with st.spinner("🤖 Thinking..."):
-        time.sleep(1)
 
-    # Get Chatbot Response
-    answer = get_answer(prompt)
+        time.sleep(0.4)
 
-    # Display Assistant Response
+        answer = get_answer(prompt)
+
+    # Save bot reply
+
     st.session_state.messages.append(
         {
-            "role": "assistant",
-            "content": answer
+            "role":"assistant",
+            "content":answer
         }
     )
 
     st.rerun()
 
-# ---------------- FOOTER ---------------- #
+    # ==========================================================
+# PROJECT STATS
+# ==========================================================
+
+if len(st.session_state.messages) > 0:
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+# ==========================================================
+# FOOTER
+# ==========================================================
 
 st.markdown("<br>", unsafe_allow_html=True)
+
 st.markdown("---")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.caption("🚀 Horizon TechX")
-
-with col2:
-    st.caption("🤖 AI FAQ Assistant")
-
-with col3:
-    st.caption("Version 1.0")
 
 st.markdown(
     """
-<div style='text-align:center;
-padding:10px;
-color:gray;
-font-size:14px;'>
+<div class="footer">
 
-Built with ❤️ using <b>Python</b> • <b>Pandas</b> • <b>Streamlit</b>
+🚀 <b>Horizon TechX Internship Project</b>
+
+🐍 Python • 📊 Pandas • ⚡ Streamlit
 
 <br><br>
 
@@ -291,5 +366,5 @@ Built with ❤️ using <b>Python</b> • <b>Pandas</b> • <b>Streamlit</b>
 
 </div>
 """,
-unsafe_allow_html=True
+    unsafe_allow_html=True
 )
