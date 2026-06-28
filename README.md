@@ -101,7 +101,7 @@ Demonstrates greeting detection and handling of unknown questions.
 
 Shows Quick Questions, Project Statistics, AI Status, and Clear Chat.
 
-![Sidebar](images/sidebar.png)
+![Sidebar](images/sidebar.jpeg)
 
 ---
 
