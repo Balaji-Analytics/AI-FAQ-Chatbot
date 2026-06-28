@@ -1,10 +1,7 @@
 import streamlit as st
 import time
-from chatbot import get_answer
-import pandas as pd
+from chatbot import get_answer, faq_data
 from datetime import datetime
-
-faq_data = pd.read_csv("data/faqs.csv")
 
 # -----------------------------
 # PAGE CONFIG
@@ -187,19 +184,19 @@ FAQ database using Python and Streamlit.
     col1, col2 = st.columns(2)
 
     with col1:
-       st.metric("FAQs", len(faq_data))
+        st.metric("FAQs", len(faq_data))
+        st.metric(
+            "Questions Asked",
+            st.session_state.conversation_count
+        )
 
     with col2:
         st.metric("Version", "2.0")
-
-        st.metric( "Questions Asked",
-        st.session_state.conversation_count
+        st.metric(
+            "Knowledge Base",
+            f"{len(faq_data)} FAQs"
         )
 
-        st.metric(
-    "Knowledge Base",
-    f"{len(faq_data)} FAQs"
-)
     st.markdown("---")
 
     if st.button("🗑 Clear Chat", use_container_width=True):

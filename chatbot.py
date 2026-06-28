@@ -3,7 +3,7 @@ import difflib
 import re
 
 # Load FAQ dataset
-faq_data = pd.read_csv("data/faqs.csv")
+faq_data = pd.read_csv("data/faqs_200.csv")
 
 # Clean text
 def clean_text(text):
